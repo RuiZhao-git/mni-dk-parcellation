@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Output / data (should not be committed)
+*.nii
+*.nii.gz
+!atlas/*.nii.gz
+*.tsv
+!atlas/*.tsv
+output/
+results/
+out/
