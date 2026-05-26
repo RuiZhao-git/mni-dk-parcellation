@@ -40,15 +40,19 @@ if [ "$n" -eq 0 ]; then
     echo "No *_desc-preproc_bold.nii.gz files found in $BOLD_DIR" >&2
     exit 1
 fi
-echo "Found $n BOLD file(s) to process."
+echo "Found $n BOLD file(s) in $BOLD_DIR."
+echo "Note: subjects whose output TSV already exists will be skipped automatically."
+echo "      To force re-processing, pass --overwrite below or delete the existing TSV."
+echo ""
 
+t0=$(date +%s)
 i=0
 for bold in "${bolds[@]}"; do
     i=$((i + 1))
-    echo ""
     echo "===== [$i/$n] $(basename "$bold") ====="
     python "$REPARC_SCRIPT" --bold "$bold" --out "$OUTPUT_DIR"
+    echo ""
 done
 
-echo ""
-echo "All $n subject(s) processed. Output: $OUTPUT_DIR"
+t_total=$(( $(date +%s) - t0 ))
+echo "Done. Processed/skipped $n subject(s) in ${t_total}s. Output: $OUTPUT_DIR"

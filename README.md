@@ -75,6 +75,21 @@ The script will loop over every `*_desc-preproc_bold.nii.gz` in
 | `--n-cut` | `4` | Number of TRs to discard from the start (0 = none) |
 | `--bandpass` | (none) | Optional bandpass band as `low,high` in Hz, e.g. `0.01,0.1` |
 | `--tr` | (from header) | TR in seconds (used for bandpass) |
+| `--overwrite` | (off) | Re-process subjects whose output already exists |
+
+### Resume after interruption
+
+By default, the script **skips** subjects whose output TSV already exists.
+This means a batch run can be safely interrupted (Ctrl+C, closed terminal,
+machine sleep) and resumed simply by re-running the same command — only
+the subjects without an output file will be processed. Pass `--overwrite`
+to force re-processing.
+
+### Approximate time per subject
+
+On a typical workstation, each subject takes roughly 1–3 minutes (single
+core, no parallelization needed). Processing a full longitudinal cohort
+of around 100–120 subject-sessions usually completes within a few hours.
 
 ---
 

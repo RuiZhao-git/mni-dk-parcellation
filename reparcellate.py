@@ -30,6 +30,7 @@ Notes on atlas:
 """
 import os
 import sys
+import time
 import argparse
 import re
 from pathlib import Path
@@ -181,6 +182,10 @@ def main() -> int:
     parser.add_argument("--tr", type=float, default=None,
                         help="TR in seconds, used for bandpass. If not given, taken from "
                              "BOLD header pixdim[4].")
+    parser.add_argument("--overwrite", action="store_true",
+                        help="Overwrite the output TSV if it already exists. By default, "
+                             "the script skips subjects whose output already exists so that "
+                             "interrupted batch runs can be safely resumed by re-running.")
     args = parser.parse_args()
 
     # ----- Resolve atlas path -----
@@ -200,9 +205,19 @@ def main() -> int:
 
     args.out.mkdir(parents=True, exist_ok=True)
 
+    # ----- Resolve output filename early + skip if it exists (resume support) -----
+    out_path = derive_output_filename(args.bold, args.out)
+    if out_path.exists() and not args.overwrite:
+        print(f"Output already exists, skipping: {out_path}")
+        print("(use --overwrite to force re-processing)")
+        return 0
+
+    t_start = time.time()
     print(f"BOLD:     {args.bold}")
     print(f"Atlas:    {atlas_path.name}")
-    print(f"Output:   {args.out}")
+    print(f"Output:   {out_path}")
+    if out_path.exists() and args.overwrite:
+        print("WARNING: --overwrite is set; existing output will be replaced.")
 
     # ----- Load + verify alignment -----
     bold_img = nib.load(str(args.bold))
@@ -279,11 +294,12 @@ def main() -> int:
         print("Bandpass: not applied (use --bandpass low,high to enable).")
 
     # ----- Save TSV -----
-    out_path = derive_output_filename(args.bold, args.out)
     out_df = pd.DataFrame(output_ts, columns=output_labels)
     out_df.to_csv(out_path, sep="\t", index=False, float_format="%.10g")
+    elapsed = time.time() - t_start
     print(f"Saved: {out_path}")
     print(f"Final shape: {output_ts.shape}, mean={output_ts.mean():.4f}, std={output_ts.std():.4f}")
+    print(f"Elapsed: {elapsed:.1f} seconds")
     return 0
 
 
