@@ -1,7 +1,13 @@
 #!/bin/bash
 # process_directory.sh
-# Example: process every BOLD NIfTI in a directory through the parcellation
-# pipeline. Adjust BOLD_DIR and OUTPUT_DIR to your paths.
+#
+# TEMPLATE for batch processing. Open this file in a text editor and set
+# BOLD_DIR and OUTPUT_DIR to your real paths before running. Then run from
+# a terminal with:
+#     bash examples/process_directory.sh
+#
+# This script loops over every '*_desc-preproc_bold.nii.gz' in BOLD_DIR
+# and calls reparcellate.py on each, writing the output TSVs to OUTPUT_DIR.
 
 set -euo pipefail
 
@@ -9,6 +15,14 @@ set -euo pipefail
 BOLD_DIR="/path/to/bolds"
 OUTPUT_DIR="/path/to/outputs"
 # ============================
+
+# Safety check: refuse to run with placeholder paths.
+if [ "$BOLD_DIR" = "/path/to/bolds" ] || [ "$OUTPUT_DIR" = "/path/to/outputs" ]; then
+    echo "ERROR: This is a template script. Please open process_directory.sh"
+    echo "       in a text editor and set BOLD_DIR and OUTPUT_DIR to your"
+    echo "       real paths before running." >&2
+    exit 1
+fi
 
 REPARC_SCRIPT="$(dirname "$0")/../reparcellate.py"
 

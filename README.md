@@ -53,7 +53,16 @@ The output TSV is named by replacing `_desc-preproc_bold.nii.gz` with
 ### Multiple subjects
 
 For batch processing of a directory of BOLD files, see
-`examples/process_directory.sh`.
+`examples/process_directory.sh`. This is a **template**: open it in a
+text editor, set `BOLD_DIR` and `OUTPUT_DIR` to your real paths, then
+run it from a terminal:
+
+```bash
+bash examples/process_directory.sh
+```
+
+The script will loop over every `*_desc-preproc_bold.nii.gz` in
+`BOLD_DIR` and write each output TSV to `OUTPUT_DIR`.
 
 ### Options
 
